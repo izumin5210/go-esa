@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - 1.7
+
+before_install:
+  - go get github.com/golang/lint/golint
+  - go get github.com/mattn/goveralls
+
+install:
+  - go get -d -t -v .
+
+script:
+  - golint ./...
+  - go vet *.go
+  - go test -v -covermode=count -coverprofile=cover.out -timeout=30s -parallel=4 ./...
+  - go test -race .
+  - goveralls -coverprofile=cover.out -service travis-ci -repotoken $COVERALLS_TOKEN
